@@ -15,6 +15,32 @@ library(shinythemes)
 library(DT)
 library(stringi)
 
+options(scipen = 999)
+options(timeout = 320)
+gc()
+
+Tools <- xfun::pkg_load2(c("htmltools", "mime")) 
+Download_Link <- xfun::embed_files(c('G-League 2003 - 2023 - NBA player status fro 2003-2023.csv'))
+
+Download_Link
+
+if(interactive() ) htmltools::browsable(Download_Link)
+
+# Read the CSV file
+k <- read.csv('G-League 2003 - 2023 - NBA player status fro 2003-2023.csv')
+
+# Assuming your dataset is named 'k'
+column_counts <- sapply(k, function(column) sum(grepl("[^[:ascii:]]", as.character(column), perl = TRUE)))
+
+# Print the column counts
+print(column_counts)
+
+# Find rows with non-ASCII characters in the "Player" column
+rows_with_non_ascii <- which(grepl("[^[:ascii:]]", k$Player, perl = TRUE))
+
+# Print the row numbers
+print(rows_with_non_ascii)
+
 # Read the CSV file
 k <- read.csv('G-League 2003 - 2023 - NBA player status fro 2003-2023.csv')
 
@@ -523,6 +549,8 @@ server <- function(input, output) {
             geom_density(fill = "purple", alpha = 0.7, position = "identity") +
             labs(
                 title = "Blocks Per Game",
+                subtitle="Based on Gatorade League Players Statistics from 2019 - 2020", 
+                caption="Portions of this data is from the Reference Section.",
                 x = "Blocks Per Game",
                 y = "Amount of Players"
             ) +
